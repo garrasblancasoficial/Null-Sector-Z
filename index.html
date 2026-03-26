@@ -2,44 +2,66 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Null_Sector.Z | Panel de Despliegue</title>
+    <title>Null_Sector.Z | Terminal de Despliegue</title>
     <style>
-        body { background: #000; color: #00ff41; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        #interface { border: 2px solid #00ff41; padding: 40px; background: rgba(0,20,0,0.8); text-align: center; box-shadow: 0 0 20px #00ff41; z-index: 10; }
-        h1 { font-size: 3em; letter-spacing: 10px; color: #fff; text-shadow: 0 0 10px #00ff41; }
-        .row { margin: 20px 0; display: flex; justify-content: space-between; gap: 30px; }
-        button { background: #00ff41; color: #000; border: none; padding: 15px 60px; font-weight: bold; cursor: pointer; font-size: 1.5em; transition: 0.3s; }
-        button:hover { background: #fff; box-shadow: 0 0 15px #fff; }
-        #game-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
+        body { margin: 0; background: #000; color: #00ff41; font-family: 'Consolas', monospace; overflow: hidden; }
+        #terminal { 
+            position: absolute; z-index: 100; width: 100vw; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background: radial-gradient(circle, #001a00 0%, #000 100%);
+        }
+        .panel { 
+            border: 2px solid #00ff41; padding: 60px; background: rgba(0,0,0,0.9);
+            box-shadow: 0 0 50px #00ff41; width: 600px;
+        }
+        h1 { font-size: 4em; letter-spacing: 15px; margin: 0; text-align: center; }
+        .row { margin: 30px 0; display: flex; justify-content: space-between; font-size: 1.2em; }
+        input[type="color"] { background: none; border: 1px solid #00ff41; height: 40px; width: 80px; }
+        button { 
+            width: 100%; padding: 25px; background: #00ff41; color: #000; 
+            font-weight: bold; font-size: 1.8em; border: none; cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { background: #fff; box-shadow: 0 0 30px #fff; }
+        #view-3d { width: 100vw; height: 100vh; display: none; }
     </style>
 </head>
 <body>
 
-    <div id="game-container"></div>
+    <div id="view-3d"></div>
 
-    <div id="interface">
-        <h1>Null_Sector.Z</h1>
-        <p>> CONFIGURACIÓN DE INSERCIÓN URBANA</p>
-        <div class="row">
-            <span>TRAJE:</span> <input type="color" id="p-gear" value="#1a1a1a">
+    <div id="terminal">
+        <div class="panel">
+            <h1>Null_Sector.Z</h1>
+            <p style="text-align:center;">ESTADO: LISTO PARA INSERCIÓN URBANA</p>
+            <div class="row">
+                <span>COLOR DE PIEL:</span>
+                <input type="color" id="p-skin" value="#ffdbac">
+            </div>
+            <div class="row">
+                <span>COLOR DE TRAJE:</span>
+                <input type="color" id="p-gear" value="#111111">
+            </div>
+            <button id="DEPLOY">DESPLEGAR EN MEGA DISTRITO</button>
         </div>
-        <button id="START">DESPLEGAR</button>
     </div>
 
     <script type="module">
         import { NullSectorEngine } from './STRATUM_CORE.js';
         import { MEGA_DISTRITO } from './DATA_MEGA_DISTRITO.js';
 
-        document.getElementById('START').onclick = () => {
-            const playerSettings = {
+        document.getElementById('DEPLOY').onclick = () => {
+            const setup = {
+                skin: document.getElementById('p-skin').value,
                 gear: document.getElementById('p-gear').value,
-                speed: 1.2
+                baseSpeed: 1.5
             };
-            document.getElementById('interface').style.display = 'none';
-            document.getElementById('game-container').style.display = 'block';
             
-            // EL TALLO INICIA Y PUEBLA LA CIUDAD CON LOS RECURSOS DE LA RAMA
-            new NullSectorEngine(MEGA_DISTRITO, playerSettings, 'game-container');
+            document.getElementById('terminal').remove();
+            document.getElementById('view-3d').style.display = 'block';
+            
+            // LANZAMIENTO DEL TALLO MAESTRO
+            new NullSectorEngine(MEGA_DISTRITO, setup, 'view-3d');
         };
     </script>
 </body>
